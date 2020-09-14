@@ -1,0 +1,65 @@
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map.Entry;
+
+public class StudentSolver {
+
+	public static HashSet<Integer> solve(HashMap<Integer, Integer>aliens){
+		int maxLevel = -1;
+		int minLevel = 1000000000;
+		int numAlien = 0;
+		HashSet<Integer> alienSet = new HashSet<Integer>();
+		HashMap<Integer, Integer> temp = new HashMap<Integer,Integer>();
+
+		Iterator<Entry<Integer, Integer>> alienIterator = aliens.entrySet().iterator();
+		//Iterator<Entry<Integer, Integer>> tIterator = temp.entrySet().iterator();
+
+		//Find out how many aliens are in the game and the how many levels
+		while (alienIterator.hasNext()) {
+			HashMap.Entry<Integer, Integer> mapElement = (HashMap.Entry<Integer, Integer>)alienIterator.next();
+			numAlien ++;
+			if(mapElement.getValue() > maxLevel) maxLevel = mapElement.getValue();
+			if(mapElement.getValue() < minLevel) minLevel = mapElement.getValue();
+		}
+
+		alienIterator = aliens.entrySet().iterator();
+		while (alienIterator.hasNext()) {
+			HashMap.Entry<Integer, Integer> mapElement = (HashMap.Entry<Integer, Integer>)alienIterator.next();
+			//Iterate through each level of aliens
+			for(int i = minLevel; i <= maxLevel; i++) {
+				//Find all aliens that are on the current level
+				for(HashMap.Entry<Integer,Integer> j : aliens.entrySet()) {
+					if(j.getValue() == minLevel) {
+						alienSet.add(j.getKey());
+					}
+					else if(j.getValue() == i) {
+						temp.put(j.getKey(), j.getValue()); //Add all aliens on current level to temporary HashMap
+						//System.out.println(temp);
+					}
+					
+				}
+				Iterator<Entry<Integer, Integer>> tIterator = temp.entrySet().iterator();
+				//Iterate through temp hash map and add every other alien
+				while(tIterator.hasNext()) {
+					//System.out.println(temp);
+					HashMap.Entry<Integer, Integer> tElement = (HashMap.Entry<Integer, Integer>)tIterator.next();
+					alienSet.add(tElement.getKey());
+					if(tIterator.hasNext()) {
+						tIterator.next();
+					}else{
+						temp.clear();
+						break;
+					}
+					
+				}
+			}
+
+		}
+
+		//System.out.println("\nMax level: " + maxLevel + "\nMin level: " + minLevel  + "\nNum of aliens: " + numAlien);
+		//System.out.println(alienSet.size());
+		return alienSet;
+	}
+}
